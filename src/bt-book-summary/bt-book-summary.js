@@ -1,13 +1,19 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
-import '@polymer/iron-image'
+import '@polymer/iron-ajax';
+import '@polymer/iron-image';
 import '../shared-styles';
 
-class BtBook extends PolymerElement {
+class BtBookSummary extends PolymerElement {
   static get properties() {
     return {
       book: {
         type: Object,
         notify: true
+      },
+      contributors: {
+        type: String,
+        readOnly: true,
+        computed: 'getContributors(book)'
       }
     }
   }
@@ -17,6 +23,7 @@ class BtBook extends PolymerElement {
       <style include="shared-styles">
         :host {
           display:inline-block;
+          width: 30%;
           margin:0 0rem 0 20px;
           box-shadow:0 0 0 1px rgba(0, 0, 0, 0.0901961);
           border-radius:3px;
@@ -51,15 +58,23 @@ class BtBook extends PolymerElement {
       </style>
 
       <div class="book-container">
-        <h1>[[book.title]]</h1>
+        <h1><b>[[book.title]]</b></h1>
         <div>
             <iron-image src="https://d1re4mvb3lawey.cloudfront.net/pg1017/cover.jpg"></iron-image>
         </div>
-        <p>[[book.description]]</p>
-        <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
+        <p>Date: [[book.date]]</p>
+        <p>Contributors: [[contributors]]</p>
       </div>
     `;
   }
+
+  handleResponse(event, request) {
+    console.log(request.response);
+  }
+
+  getContributors(book) {
+    return (book.contributors || []).join(' | ');
+  }
 }
 
-window.customElements.define('bt-book', BtBook);
+window.customElements.define('bt-book-summary', BtBookSummary);

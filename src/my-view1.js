@@ -10,16 +10,35 @@
 
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import '@polymer/iron-image'
-import './bt-book/bt-book.js';
+import '@polymer/iron-ajax';
+import './bt-book-summary/bt-book-summary.js';
 import './shared-styles.js';
 
 class MyView1 extends PolymerElement {
 
+  constructor() {
+    super();
+    this.url = '';
+    this.book = null;
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    const url = `https://d1re4mvb3lawey.cloudfront.net/${this.isbn}/index.json`;
+    console.log(url);
+    this.set('url', url);
+  }
+
   static get properties() {
     return {
+      isbn: {
+        type: Object,
+        notify: true
+      },
       book: {
         type: Object,
-        value: () => ({ name: 'Test', description: 'TEST DESCRIPTION' })
+        readOnly: true,
+        notify: true
       }
     }
   }
@@ -34,11 +53,32 @@ class MyView1 extends PolymerElement {
         }
         
       </style>
-
+      <template is="dom-if" if="[[url]]">
+        <iron-ajax
+            auto
+            url="[[url]]"
+            handle-as="json"
+            on-response="handleResponse"
+            debounce-duration="300">
+        </iron-ajax>      </template>
+        
       <div class="card">
-        <bt-book book="[[book]]"></bt-book>
+      <template is="dom-if" if="[[book]]">
+        <bt-book-summary book="[[book]]"></bt-book-summary>
+      </template>
       </div>
     `;
+  }
+
+  handleResponse(event, request) {
+    console.log(request.status, request.response);
+    const { status, response } = request;
+    if (status === 200) {
+      this._setBook(response);
+    }
+    else {
+      this._setBook(null);
+    }
   }
 }
 
