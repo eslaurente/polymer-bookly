@@ -12,6 +12,7 @@ import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import '@polymer/iron-image'
 import '@polymer/iron-ajax';
 import './bt-book-summary/bt-book-summary.js';
+import './bt-book-toc/bt-book-toc';
 import './shared-styles.js';
 
 class MyView1 extends PolymerElement {
@@ -48,10 +49,12 @@ class MyView1 extends PolymerElement {
       <style include="shared-styles">
         :host {
           display: block;
-
           padding: 10px;
         }
         
+        .card {
+          display: flex;
+        }
       </style>
       <template is="dom-if" if="[[url]]">
         <iron-ajax
@@ -60,11 +63,12 @@ class MyView1 extends PolymerElement {
             handle-as="json"
             on-response="handleResponse"
             debounce-duration="300">
-        </iron-ajax>      </template>
-        
+        </iron-ajax>
+      </template>
       <div class="card">
       <template is="dom-if" if="[[book]]">
         <bt-book-summary book="[[book]]"></bt-book-summary>
+        <bt-book-toc table-of-contents="[[book.toc]]" ></bt-book-toc>
       </template>
       </div>
     `;
